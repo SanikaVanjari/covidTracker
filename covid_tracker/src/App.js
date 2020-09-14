@@ -10,6 +10,7 @@ import {
 import InfoBox from "./InfoBox"
 import Map from "./Map"
 import Table from "./Table"
+import { sortData } from "./util"
 
 function App() {
   const [countries, setCountries] = useState([])
@@ -37,8 +38,9 @@ function App() {
             value: country.countryInfo.iso2,
           }))
           // set it to local variable
+          const sortedData = sortData(data)
           setCountries(countries)
-          setTableData(data)
+          setTableData(sortedData)
         })
     }
     //Call the function in useEffect
