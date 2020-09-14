@@ -9,11 +9,13 @@ import {
 } from "@material-ui/core"
 import InfoBox from "./InfoBox"
 import Map from "./Map"
+import Table from "./Table"
 
 function App() {
   const [countries, setCountries] = useState([])
   const [country, setCountry] = useState("worldwide")
   const [countryInfo, setCountryInfo] = useState({})
+  const [tableData, setTableData] = useState([])
 
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all")
@@ -36,6 +38,7 @@ function App() {
           }))
           // set it to local variable
           setCountries(countries)
+          setTableData(data)
         })
     }
     //Call the function in useEffect
@@ -103,6 +106,7 @@ function App() {
       <Card className="app__right">
         <CardContent>
           <h3>Live cases by country</h3>
+          <Table countries={tableData} />
           <h3>Worldwide new cases</h3>
         </CardContent>
       </Card>
