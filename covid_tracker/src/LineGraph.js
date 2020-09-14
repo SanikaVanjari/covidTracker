@@ -1,14 +1,13 @@
-import React from "react"
-import { useState, useEffect } from "react"
-import { Line } from "react-chartjs-2"
-import numeral from "numeral"
+import React, { useState, useEffect } from "react";
+import { Line } from "react-chartjs-2";
+import numeral from "numeral";
 
 const options = {
   legend: {
     display: false,
   },
   elements: {
-    points: {
+    point: {
       radius: 0,
     },
   },
@@ -18,7 +17,7 @@ const options = {
     intersect: false,
     callbacks: {
       label: function (tooltipItem, data) {
-        return numeral(tooltipItem.value).format("+0,0")
+        return numeral(tooltipItem.value).format("+0,0");
       },
     },
   },
@@ -38,51 +37,54 @@ const options = {
           display: false,
         },
         ticks: {
-          //Include a dollar sign in the ticks
+          // Include a dollar sign in the ticks
           callback: function (value, index, values) {
-            return numeral(value).format("0a")
+            return numeral(value).format("0a");
           },
         },
       },
     ],
   },
-}
+};
 
-function LineGraph({ casesType = "cases" }) {
-  const [data, setData] = useState({})
+const buildChartData = (data, casesType) => {
+  let chartData = [];
+  let lastDataPoint;
+  for (let date in data.cases) {
+    if (lastDataPoint) {
+      let newDataPoint = {
+        x: date,
+        y: data[casesType][date] - lastDataPoint,
+      };
+      chartData.push(newDataPoint);
+    }
+    lastDataPoint = data[casesType][date];
+  }
+  return chartData;
+};
+
+function LineGraph({ casesType, ...props }) {
+  const [data, setData] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
-      fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=120")
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data)
-          const chartData = buildChartData(data, casesType)
-          setData(chartData)
+      await fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=120")
+        .then((response) => {
+          return response.json();
         })
-    }
+        .then((data) => {
+          let chartData = buildChartData(data, casesType);
+          setData(chartData);
+          console.log(chartData);
+          // buildChart(chartData);
+        });
+    };
 
-    fetchData()
-  }, [])
-
-  const buildChartData = (data, casesType) => {
-    let chartData = []
-    let lastDataPoint
-    for (let date in data.cases) {
-      if (lastDataPoint) {
-        let newDataPoint = {
-          x: date,
-          y: data[casesType][date] - lastDataPoint,
-        }
-        chartData.push(newDataPoint)
-      }
-      lastDataPoint = data[casesType][date]
-    }
-    return chartData
-  }
+    fetchData();
+  }, [casesType]);
 
   return (
-    <div>
+    <div className={props.className}>
       {data?.length > 0 && (
         <Line
           data={{
@@ -98,7 +100,7 @@ function LineGraph({ casesType = "cases" }) {
         />
       )}
     </div>
-  )
+  );
 }
 
-export default LineGraph
+export default LineGraph;
