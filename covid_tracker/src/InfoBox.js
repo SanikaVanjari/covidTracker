@@ -4,8 +4,8 @@ import "./InfoBox.css"
 //destructuring
 function InfoBox({ title, cases, total }) {
   return (
-    <Card>
-      <CardContent className="infoBox">
+    <Card className="infoBox">
+      <CardContent>
         <Typography className="infoBox__title" color="textSecondary">
           {title}
         </Typography>
