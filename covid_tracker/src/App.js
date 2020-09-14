@@ -15,6 +15,14 @@ function App() {
   const [country, setCountry] = useState("worldwide")
   const [countryInfo, setCountryInfo] = useState({})
 
+  useEffect(() => {
+    fetch("https://disease.sh/v3/covid-19/all")
+      .then((response) => response.json())
+      .then((data) => {
+        setCountryInfo(data)
+      })
+  }, [])
+
   // if the useeffect input is [] -- then it will run once when the app component loads
   useEffect(() => {
     const getCountiresData = async () => {
@@ -64,7 +72,9 @@ function App() {
             >
               <MenuItem value="worldwide">WorldWide</MenuItem>
               {countries.map((country) => (
-                <MenuItem value={country.value}>{country.name}</MenuItem>
+                <MenuItem key={country.value} value={country.value}>
+                  {country.name}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
