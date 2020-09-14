@@ -13,6 +13,7 @@ import Map from "./Map"
 function App() {
   const [countries, setCountries] = useState([])
   const [country, setCountry] = useState("worldwide")
+  const [countryInfo, setCountryInfo] = useState({})
 
   // if the useeffect input is [] -- then it will run once when the app component loads
   useEffect(() => {
@@ -35,8 +36,19 @@ function App() {
 
   const onCountryChange = async (event) => {
     const countryCode = event.target.value
-    //Change value of the dropdown
-    setCountry(countryCode)
+    const url =
+      countryCode === "worldwide"
+        ? "https://disease.sh/v3/covid-19/all"
+        : `https://disease.sh/v3/covid-19/countries/${countryCode}`
+
+    await fetch(url).then((response) =>
+      response.json().then((data) => {
+        //Change value of the dropdown
+        setCountry(countryCode)
+        // All the data about the country
+        setCountryInfo(data)
+      })
+    )
   }
 
   return (
@@ -59,9 +71,21 @@ function App() {
         </div>
 
         <div className="app__stats">
-          <InfoBox title="Coronavirus Cases" cases={124} total={123} />
-          <InfoBox title="Recovered" cases={124} total={2312} />
-          <InfoBox title="Deaths" cases={1243} total={2300} />
+          <InfoBox
+            title="Coronavirus Cases"
+            cases={countryInfo.todayCases}
+            total={countryInfo.cases}
+          />
+          <InfoBox
+            title="Recovered"
+            cases={countryInfo.todayRecovered}
+            total={countryInfo.todayRecovered}
+          />
+          <InfoBox
+            title="Deaths"
+            cases={countryInfo.todayDeaths}
+            total={countryInfo.deaths}
+          />
         </div>
 
         <Map />
