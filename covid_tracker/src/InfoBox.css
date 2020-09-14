@@ -1,12 +1,13 @@
-.infoBox{
+.infoBox {
     flex: 1;
-}
-
-.infoBox:not(:last-child){
+    cursor: pointer;
+  }
+  
+  .infoBox:not(:last-child) {
     margin-right: 10px;
-}
-
-.infoBox--selected {
+  }
+  
+  .infoBox--selected {
     border-top: 10px solid greenyellow;
   }
   
